@@ -1,2 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using BankingSystem;
+
+var readWriter = ConsoleReadWriter.Instance;
+var prompt = new Prompter(readWriter);
+
+prompt.Launch();
