@@ -4,14 +4,20 @@ namespace BankingSystem.Account
 {
     internal class Transactions
     {
-        private readonly List<Transaction> _transactions;
+        private readonly IList<Transaction> _transactions;
+
+        public bool Empty => _transactions.Count == 0;
+
+        public bool HasNegtiveBalance => _transactions
+            .OrderBy(t => t.Date)
+            .Sum(t => t.Amount) < 0;
 
         public void Add(Transaction transaction)
         {
             _transactions.Add(transaction);
         }
 
-        public Transactions(IEnumerable<Transaction> transactions)
+        private Transactions(IEnumerable<Transaction> transactions)
         {
             _transactions = transactions.ToList();
         }
@@ -38,11 +44,11 @@ namespace BankingSystem.Account
         public override string ToString()
         {
             var sb = new StringBuilder();
-
+            sb.AppendLine("| Date     | Txn Id      | Type | Amount |");
             foreach (var transaction in _transactions.Select(t => t.ToString()))
                 sb.AppendLine(transaction);
 
-            return sb.ToString();
+            return sb.ToString().TrimEnd();
         }
     }
 }

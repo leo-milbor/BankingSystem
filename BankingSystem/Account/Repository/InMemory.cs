@@ -23,7 +23,7 @@ namespace BankingSystem.Account.Repository
 
         public void Update(Account account)
         {
-            // account is already updated for an in memory DB.
+            // account is already updated for an in memory database.
         }
     }
 }

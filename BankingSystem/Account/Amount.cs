@@ -4,22 +4,32 @@ namespace BankingSystem.Account
 {
     internal class Amount
     {
+        private static readonly CultureInfo _cultureInfo = new("en-US");
         private readonly decimal _amount;
+
+        public decimal Value => _amount;
 
         public Amount(string rawAmount)
         {
-            var isDecimal = decimal.TryParse(rawAmount, out _amount);
-            if (!isDecimal)
-                throw new NotAValidDecimalNumberException();
+            try
+            {
+                _amount = Convert.ToDecimal(rawAmount, _cultureInfo);
+            }
+            catch
+            {
+                throw new NotAValidDecimalException();
+            }
             if (_amount <= 0)
                 throw new NegativeAmountException();
-            if (rawAmount != _amount.ToString("000.00"))
+            if (rawAmount.Length > Format(_amount).TrimStart().Length)
                 throw new TooManyDecimalsException();
         }
 
-        public override string ToString() => _amount.ToString(CultureInfo.CurrentCulture);
+        public override string ToString() => Format(_amount);
+
+        private static string Format(decimal amount) => string.Format(_cultureInfo, "{0,6:##0.00}", amount);
+        internal class NotAValidDecimalException : Exception { }
+        internal class TooManyDecimalsException : Exception { }
+        internal class NegativeAmountException : Exception { }
     }
-    internal class NotAValidDecimalNumberException : Exception { }
-    internal class TooManyDecimalsException : Exception { }
-    internal class NegativeAmountException : Exception { }
 }

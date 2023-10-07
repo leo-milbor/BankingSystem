@@ -1,12 +1,6 @@
-﻿using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.Serialization;
-
-using Microsoft.VisualBasic;
-
-namespace BankingSystem.Account
+﻿namespace BankingSystem.Account
 {
-    internal class Date
+    internal class Date : IEquatable<Date?>, IComparable<Date>
     {
         private readonly DateTime _date;
 
@@ -28,7 +22,40 @@ namespace BankingSystem.Account
             catch { throw new NotAValidDateFormatException(); }
         }
 
+        public int CompareTo(Date? other)
+        {
+            if (other is null) throw new ArgumentNullException(nameof(other));
+            return _date.CompareTo(other._date);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Date);
+        }
+
+        public bool Equals(Date? other)
+        {
+            return other is not null &&
+                   _date == other._date;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_date);
+        }
+
         public override string ToString() => _date.ToString("yyyyMMdd");
+
+        public static bool operator ==(Date? left, Date? right)
+        {
+            return EqualityComparer<Date>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(Date? left, Date? right)
+        {
+            return !(left == right);
+        }
+
+        internal class NotAValidDateFormatException : Exception { }
     }
-    internal class NotAValidDateFormatException : Exception { }
 }

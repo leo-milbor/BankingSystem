@@ -19,7 +19,7 @@ namespace BankingSystemTests.Account
         [InlineData("10072023")]
         public void Date_must_use_YYYYMMdd_format(string date)
         {
-            Assert.Throws<NotAValidDateFormatException>(() => new Date(date));
+            Assert.Throws<Date.NotAValidDateFormatException>(() => new Date(date));
         }
     }
 }

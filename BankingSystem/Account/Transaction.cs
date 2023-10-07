@@ -3,23 +3,28 @@
     internal class Transaction
     {
         private readonly Amount _amount;
-        private TransactionType _type;
+        private readonly TransactionType _type;
         private readonly string _id;
+        private readonly int _runningNumber;
+        private readonly Date _date;
+
+        public int RunningNumber => _runningNumber;
+        public Date Date => _date;
+        public bool IsWithdrawal => _type.IsWithdrawal;
+        public decimal Amount => _amount.Value;
+
         public Transaction(int runningNumber, Date date, TransactionType type, Amount amount)
         {
-            RunningNumber = runningNumber;
-            Date = date;
+            _runningNumber = runningNumber;
+            _date = date;
             _type = type;
             _amount = amount;
-            _id = $"{Date}-{RunningNumber.ToString("00")}";
+            _id = $"{_date}-{_runningNumber.ToString("00")}";
         }
-
-        public int RunningNumber { get; private set; }
-        public Date Date { get; private set; }
 
         public override string ToString()
         {
-            return $"| {Date} | {_id} | {_type}    | {_amount} |";
+            return $"| {Date} | {_id} | {_type} | {_amount} |";
         }
     }
 }

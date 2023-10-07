@@ -24,20 +24,25 @@
             var amount = new Amount(inputs[3]);
 
             var existingAccount = _accounRepository.Get(accountName);
-            if (existingAccount == null)
-            {
-                var transaction = new Transaction(1, date, transactionType, amount);
-                var account = new Account(accountName, new Transactions(transaction));
-                _accounRepository.Add(account);
-                existingAccount = account;
-            }
+            if (existingAccount is null)
+                return AddNewAccount(accountName, date, transactionType, amount);
             else
-            {
-                existingAccount.Add(date, transactionType, amount);
-                _accounRepository.Update(existingAccount);
-            }
+                return UpdateAccountWithNewTransaction(existingAccount, date, transactionType, amount);
+        }
 
+        private string UpdateAccountWithNewTransaction(Account existingAccount, Date date, TransactionType transactionType, Amount amount)
+        {
+            existingAccount.AddTransaction(date, transactionType, amount);
+            _accounRepository.Update(existingAccount);
             return existingAccount.ToString();
+        }
+
+        private string AddNewAccount(string accountName, Date date, TransactionType transactionType, Amount amount)
+        {
+            var transaction = new Transaction(1, date, transactionType, amount);
+            var account = new Account(accountName, transaction);
+            _accounRepository.Add(account);
+            return account.ToString();
         }
     }
 }
