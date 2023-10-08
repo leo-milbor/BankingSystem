@@ -25,7 +25,7 @@ namespace BankingSystem
         public void Launch()
         {
             _readWriter.Write(_launchingPrompt);
-            var value = _readWriter.Read().ToUpper(CultureInfo.CurrentCulture);
+            var value = _readWriter.Read().ToUpper();
             _readWriter.Write(NextPrompt(value));
         }
 
@@ -38,7 +38,11 @@ namespace BankingSystem
         };
 
         private const string _launchingPrompt = @"Welcome to AwesomeGIC Bank! What would you like to do?
-[T] Input transactions 
+" + _inputChoices;
+
+        private const string _followupPrompt = @"Is there anything else you'd like to do?" + _inputChoices;
+
+        private const string _inputChoices = @"[T] Input transactions 
 [I] Define interest rules
 [P] Print statement
 [Q] Quit";
