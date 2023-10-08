@@ -2,9 +2,7 @@
 
 using BankingSystem.Account.UseCases;
 
-using BankingSystemTests.Account.Repository;
-
-namespace BankingSystemTests.Account.UseCases
+namespace BankingSystemTests.AccountTests.UseCasesTests
 {
     public class InputTransactionTests
     {

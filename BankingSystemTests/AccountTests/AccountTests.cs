@@ -2,9 +2,7 @@
 
 using System.Text;
 
-using BS = BankingSystem.Account;
-
-namespace BankingSystemTests.Account
+namespace BankingSystemTests.AccountTests
 {
     public class AccountTests
     {
@@ -18,8 +16,8 @@ namespace BankingSystemTests.Account
             var emptyTransactions = new Transactions(t)
                 .AtDate(new Date("20221225"));
 
-            Assert.Throws<BS.Account.EmptyTransactionsException>(
-                () => new BS.Account("Some account", emptyTransactions));
+            Assert.Throws<Account.EmptyTransactionsException>(
+                () => new Account("Some account", emptyTransactions));
         }
 
         [Fact]
@@ -35,7 +33,7 @@ namespace BankingSystemTests.Account
             var t2 = new Transaction(2, new Date("20231007"), new TransactionType("W"), new Amount("50"));
             var t = new Transactions(t1);
             t.Add(t2);
-            var a = new BS.Account("AC001", t);
+            var a = new Account("AC001", t);
 
             Assert.Equal(expected, a.ToString());
         }
@@ -52,7 +50,7 @@ namespace BankingSystemTests.Account
 
             var t1 = new Transaction(1, new Date("20231007"), new TransactionType("D"), new Amount("100"));
             var t = new Transactions(t1);
-            var a = new BS.Account("AC001", t);
+            var a = new Account("AC001", t);
 
             a.AddTransaction(new Date("20231007"), new TransactionType("W"), new Amount("50"));
             a.AddTransaction(new Date("20231023"), new TransactionType("D"), new Amount("25"));
@@ -64,15 +62,15 @@ namespace BankingSystemTests.Account
         public void Account_cannot_be_created_with_withdrawal()
         {
             var t = new Transaction(1, new Date("20231007"), new TransactionType("W"), new Amount("100"));
-            Assert.Throws<BS.Account.NegativeBalanceException>(() => new BS.Account("AC001", t));
+            Assert.Throws<Account.NegativeBalanceException>(() => new Account("AC001", t));
         }
 
         [Fact]
         public void Account_cannot_have_negative_balance()
         {
             var t = new Transaction(1, new Date("20231007"), new TransactionType("D"), new Amount("100"));
-            var a = new BS.Account("AC001", t);
-            Assert.Throws<BS.Account.NegativeBalanceException>(
+            var a = new Account("AC001", t);
+            Assert.Throws<Account.NegativeBalanceException>(
                 () => a.AddTransaction(new Date("20231010"), new TransactionType("W"), new Amount("150")));
         }
     }

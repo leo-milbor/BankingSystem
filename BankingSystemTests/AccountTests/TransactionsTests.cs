@@ -2,7 +2,7 @@
 
 using BankingSystem.Account;
 
-namespace BankingSystemTests.Account
+namespace BankingSystemTests.AccountTests
 {
     public class TransactionsTests
     {

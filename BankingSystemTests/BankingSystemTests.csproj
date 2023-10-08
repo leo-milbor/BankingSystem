@@ -25,4 +25,8 @@
     <ProjectReference Include="..\BankingSystem\BankingSystem.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="InterestRateTests\UseCasesTests\" />
+  </ItemGroup>
+
 </Project>

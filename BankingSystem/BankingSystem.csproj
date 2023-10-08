@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="InterestRate\UseCases\" />
+    <Folder Include="InterestRate\Repository\" />
+  </ItemGroup>
+
 </Project>
