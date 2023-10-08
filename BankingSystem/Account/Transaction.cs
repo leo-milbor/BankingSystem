@@ -11,7 +11,7 @@
         public int RunningNumber => _runningNumber;
         public Date Date => _date;
         public bool IsWithdrawal => _type.IsWithdrawal;
-        public decimal Amount => _amount.Value;
+        public decimal Amount => IsWithdrawal ? -_amount.Value : _amount.Value;
 
         public Transaction(int runningNumber, Date date, TransactionType type, Amount amount)
         {

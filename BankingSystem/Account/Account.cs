@@ -8,6 +8,8 @@ namespace BankingSystem.Account
         private readonly string _name;
         private readonly Transactions _transactions;
 
+        public string Name => _name;
+
         public Account(string name, Transactions transactions)
         {
             if (transactions.Empty)

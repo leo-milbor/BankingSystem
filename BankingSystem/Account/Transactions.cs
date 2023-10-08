@@ -45,7 +45,7 @@ namespace BankingSystem.Account
         {
             var sb = new StringBuilder();
             sb.AppendLine("| Date     | Txn Id      | Type | Amount |");
-            foreach (var transaction in _transactions.Select(t => t.ToString()))
+            foreach (var transaction in _transactions.OrderBy(t => t.Date).Select(t => t.ToString()))
                 sb.AppendLine(transaction);
 
             return sb.ToString().TrimEnd();

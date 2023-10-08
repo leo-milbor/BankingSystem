@@ -10,6 +10,8 @@ namespace BankingSystem.Account.Repository
         {
             _accounts = accounts;
         }
+        public InMemory() : this(new HashSet<Account>()) { }
+
 
         public void Add(Account account)
         {
@@ -18,7 +20,7 @@ namespace BankingSystem.Account.Repository
 
         public Account? Get(string account)
         {
-            return _accounts.FirstOrDefault(a => a.Equals(account));
+            return _accounts.FirstOrDefault(a => a.Name == account);
         }
 
         public void Update(Account account)

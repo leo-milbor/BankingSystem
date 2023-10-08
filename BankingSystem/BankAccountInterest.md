@@ -40,7 +40,7 @@ Some constraints to note:
 * Type is D for deposit, W for withdrawal, case insensitive
 * Amount must be greater than zero, decimals are allowed up to 2 decimal places
 * An account's balance should not be less than 0. Therefore, the first transaction on an account should not be a withdrawal, and any transactions thereafter should not make balance go below 0
-* Each transaction should be given a unique id in YYYMMdd-xx format, where xx is a running number (see example below)
+* Each transaction should be given a unique id in YYYYMMdd-xx format, where xx is a running number (see example below)
 
 Then system responds by displaying the statement of the account:
 (assuming there are already some transactions in the account)

@@ -1,4 +1,5 @@
 ﻿using BankingSystem.Account.UseCases;
+
 using BS = BankingSystem.Account;
 
 namespace BankingSystemTests.Account.Repository
@@ -11,6 +12,7 @@ namespace BankingSystemTests.Account.Repository
         {
             _accounts = accounts;
         }
+        public InMemoryAccountRepository() : this(new HashSet<BS.Account>()) { }
 
         public void Add(BS.Account account)
         {
@@ -19,7 +21,12 @@ namespace BankingSystemTests.Account.Repository
 
         public BS.Account? Get(string account)
         {
-            return _accounts.FirstOrDefault(a => a.Equals(account));
+            return _accounts.FirstOrDefault(a => a.Name == account);
+        }
+
+        public ISet<BS.Account> GetAll()
+        {
+            return new HashSet<BS.Account>(_accounts);
         }
 
         public void Update(BS.Account account)

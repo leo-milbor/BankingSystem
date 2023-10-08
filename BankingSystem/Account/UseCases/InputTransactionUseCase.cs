@@ -6,11 +6,11 @@
         Account? Get(string account);
         void Update(Account account);
     }
-    internal class InputTransaction
+    internal class InputTransactionUseCase
     {
         private readonly IAccounRepository _accounRepository;
 
-        public InputTransaction(IAccounRepository accounRepository)
+        public InputTransactionUseCase(IAccounRepository accounRepository)
         {
             _accounRepository = accounRepository;
         }
@@ -18,10 +18,13 @@
         public string Apply(string input)
         {
             var inputs = input.Split(' ');
-            var date = new Date(inputs[0]);
-            var accountName = inputs[1];
-            var transactionType = new TransactionType(inputs[2]);
-            var amount = new Amount(inputs[3]);
+            if (inputs.Length != 4)
+                return "Not enough arguments to create an account.";
+
+            Date date = new Date(inputs[0]);
+            string accountName = inputs[1];
+            TransactionType transactionType = new TransactionType(inputs[2]);
+            Amount amount = new Amount(inputs[3]);
 
             var existingAccount = _accounRepository.Get(accountName);
             if (existingAccount is null)
