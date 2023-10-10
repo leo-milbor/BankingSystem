@@ -1,6 +1,6 @@
 ﻿namespace BankingSystem.Account.UseCases
 {
-    internal interface IAccounRepository
+    internal interface IAccountRepository
     {
         void Add(Account account);
         Account? Get(string account);
@@ -8,9 +8,9 @@
     }
     internal class InputTransactionUseCase
     {
-        private readonly IAccounRepository _accounRepository;
+        private readonly IAccountRepository _accounRepository;
 
-        public InputTransactionUseCase(IAccounRepository accounRepository)
+        public InputTransactionUseCase(IAccountRepository accounRepository)
         {
             _accounRepository = accounRepository;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 
+using BankingSystem;
 using BankingSystem.Account;
 
 namespace BankingSystemTests.AccountTests
@@ -48,6 +49,6 @@ namespace BankingSystemTests.AccountTests
             Assert.Throws<Amount.NotAValidDecimalException>(() => new Amount(amount));
         }
 
-        private static string formatDecimal(decimal value, string format) => value.ToString(format, new CultureInfo("en-US"));
+        private static string formatDecimal(decimal value, string format) => value.ToString(format, SingaporeanFormatProvider.Instance);
     }
 }

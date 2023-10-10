@@ -1,4 +1,6 @@
-﻿namespace BankingSystem.Account
+﻿using System.Globalization;
+
+namespace BankingSystem.Account
 {
     internal class Transaction
     {
@@ -19,12 +21,12 @@
             _date = date;
             _type = type;
             _amount = amount;
-            _id = $"{_date}-{_runningNumber.ToString("00")}";
+            _id = $"{_date}-{_runningNumber.ToString("00", CultureInfo.InvariantCulture)}";
         }
 
         public override string ToString()
         {
-            return $"| {Date} | {_id} | {_type} | {_amount} |";
+            return string.Format(CultureInfo.InvariantCulture, $"| {Date} | {_id} | {_type} | {_amount} |");
         }
     }
 }
