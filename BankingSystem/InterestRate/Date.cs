@@ -14,12 +14,9 @@ namespace BankingSystem.InterestRule
                 throw new NotAValidDateFormatException();
         }
 
-        public int CompareTo(Date? other)
-        {
-            if (other is null) throw new ArgumentNullException(nameof(other));
-            return _date.CompareTo(other._date);
-        }
+        public override string ToString() => _date.ToString(_format, SingaporeanFormatProvider.Instance);
 
+        #region Equality and comparison
         public override bool Equals(object? obj)
         {
             return Equals(obj as Date);
@@ -36,8 +33,6 @@ namespace BankingSystem.InterestRule
             return HashCode.Combine(_date);
         }
 
-        public override string ToString() => _date.ToString(_format, SingaporeanFormatProvider.Instance);
-
         public static bool operator ==(Date? left, Date? right)
         {
             return EqualityComparer<Date>.Default.Equals(left, right);
@@ -47,6 +42,14 @@ namespace BankingSystem.InterestRule
         {
             return !(left == right);
         }
+
+        public int CompareTo(Date? other)
+        {
+            if (other is null) throw new ArgumentNullException(nameof(other));
+            return _date.CompareTo(other._date);
+        }
+
+        #endregion Equality and comparison
 
         internal class NotAValidDateFormatException : Exception { }
     }

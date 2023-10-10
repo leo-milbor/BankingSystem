@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using BankingSystem.InterestRule;
+﻿using BankingSystem.InterestRule;
 using BankingSystem.InterestRule.UseCases;
 
 namespace BankingSystemTests.InterestRuleTests.UseCasesTests
@@ -8,27 +6,21 @@ namespace BankingSystemTests.InterestRuleTests.UseCasesTests
     internal class InMemoryInterestRuleRepository : IInterestRuleRepository
     {
         private readonly ISet<InterestRule> _interestRules;
-        public void Add(InterestRule rule)
+
+        private InMemoryInterestRuleRepository(ISet<InterestRule> interestRules)
         {
-            throw new NotImplementedException();
+            _interestRules = interestRules;
+        }
+        public InMemoryInterestRuleRepository() : this(new HashSet<InterestRule>()) { }
+
+        public void Upsert(InterestRule rule)
+        {
+            _interestRules.Add(rule);
         }
 
         public ISet<InterestRule> GetAll()
         {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class InterestRuleComparer : IEqualityComparer<InterestRule>
-    {
-        public bool Equals(InterestRule? x, InterestRule? y)
-        {
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode([DisallowNull] InterestRule obj)
-        {
-            throw new NotImplementedException();
+            return new HashSet<InterestRule>(_interestRules);
         }
     }
 }
