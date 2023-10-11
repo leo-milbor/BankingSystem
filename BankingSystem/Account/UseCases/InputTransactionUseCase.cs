@@ -25,7 +25,7 @@ namespace BankingSystem.Account.UseCases
         {
             var inputs = input.Split(' ');
             if (inputs.Length != 4)
-                throw new UseCaseException("Not enough arguments to create an account.");
+                throw new UseCaseException("Wrong number of argument to create an account.");
             AccountDTO dto;
             try
             {

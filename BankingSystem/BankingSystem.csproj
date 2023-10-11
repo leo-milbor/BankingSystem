@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Folder Include="Fromater\" />
-    <Folder Include="PrintStatement\" />
+    <Folder Include="Statement\" />
   </ItemGroup>
 
 </Project>

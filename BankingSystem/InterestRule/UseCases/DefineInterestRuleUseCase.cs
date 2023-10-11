@@ -24,7 +24,7 @@ namespace BankingSystem.InterestRule.UseCases
         {
             var inputs = input.Split(' ');
             if (inputs.Length != 3)
-                throw new UseCaseException("Not enough argument to define an interest rule.");
+                throw new UseCaseException("Wrong number of argument to define an interest rule.");
 
             var rule = TryParse(inputs);
 

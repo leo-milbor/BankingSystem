@@ -1,4 +1,5 @@
-﻿using BankingSystem.Account;
+﻿using BankingSystem;
+using BankingSystem.Account;
 using BankingSystem.Account.UseCases;
 
 namespace BankingSystemTests.AccountTests.UseCasesTests
@@ -30,7 +31,7 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
         {
             var expectedOutput = new AccountDTO("AC001",
                 new List<TransactionDTO>()
-                { 
+                {
                     new TransactionDTO(1, new DateOnly(2023, 05, 05), "D", 100m),
                     new TransactionDTO(1, new DateOnly(2023, 06, 1), "D", 150m),
                     new TransactionDTO(1, new DateOnly(2023, 06, 26), "W", 20m),
@@ -52,6 +53,28 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
             var dbActual = ToDTO(dbAccounts.First(a => a.Name == "AC001"));
             Assert.Equal(expectedOutput.Id, dbActual.Id);
             Assert.Equal(expectedOutput.Transactions, dbActual.Transactions.ToList());
+        }
+
+        [Theory]
+        [InlineData("", "Wrong number of argument to create an account.")]
+        [InlineData("2023/05/05 AC002 D 100.00", "Invalid date, should be in YYYYMMdd format.")]
+        [InlineData("20230505 AC002 Z 100.00", "Invalid type, D for deposit, W for withdrawal.")]
+        [InlineData("20230505 AC002 D hundred", "Invalid amount, should be a correct decimal number.")]
+        [InlineData("20230505 AC002 D 100.153", "Invalid amount, decimals are allowed up to 2 decimal places.")]
+        [InlineData("20230505 AC002 D -100.00", "Invalid amount, must be greater than zero.")]
+        [InlineData("20230505 AC002 W 100.00", "Invalid transaction, balance should not be less than 0.")]
+        public void User_has_feedback_on_invalid_input(string input, string expectedMessage)
+        {
+            var accountRepository = new InMemoryAccountRepository();
+            var useCase = new InputTransactionUseCase(accountRepository);
+            try
+            {
+                useCase.Apply(input);
+            }
+            catch (UseCaseException e)
+            {
+                Assert.Equal(expectedMessage, e.Message);
+            }
         }
 
         private static AccountDTO ToDTO(Account account)
