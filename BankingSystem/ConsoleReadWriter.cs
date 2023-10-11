@@ -1,6 +1,7 @@
 ﻿namespace BankingSystem
 {
-    internal class ConsoleReadWriter : IReadWriter    {
+    internal class ConsoleReadWriter : IReadWriter
+    {
         public static ConsoleReadWriter Instance => new ConsoleReadWriter();
 
         public string Read()

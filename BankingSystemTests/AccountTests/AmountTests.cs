@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-using BankingSystem;
+﻿using BankingSystem;
 using BankingSystem.Account;
 
 namespace BankingSystemTests.AccountTests
@@ -9,7 +7,7 @@ namespace BankingSystemTests.AccountTests
     {
         [Theory]
         [InlineData(100, "100.00")]
-        [InlineData(50, " 50.00")]
+        [InlineData(50, "50.00")]
         [InlineData(235.67, "235.67")]
         public void Correct_amount(decimal value, string expected)
         {

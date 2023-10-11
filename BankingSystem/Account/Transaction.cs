@@ -12,8 +12,9 @@ namespace BankingSystem.Account
 
         public int RunningNumber => _runningNumber;
         public Date Date => _date;
+        public string Type => _type.ToString();
         public bool IsWithdrawal => _type.IsWithdrawal;
-        public decimal Amount => IsWithdrawal ? -_amount.Value : _amount.Value;
+        public decimal Amount => _amount.Value;
 
         public Transaction(int runningNumber, Date date, TransactionType type, Amount amount)
         {
@@ -22,11 +23,6 @@ namespace BankingSystem.Account
             _type = type;
             _amount = amount;
             _id = $"{_date}-{_runningNumber.ToString("00", CultureInfo.InvariantCulture)}";
-        }
-
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, $"| {Date} | {_id} | {_type} | {_amount} |");
         }
     }
 }

@@ -1,32 +1,30 @@
-﻿using System.Globalization;
-
-namespace BankingSystem.Account
+﻿namespace BankingSystem.Account
 {
     internal class Amount
     {
-        private readonly decimal _amount;
+        private readonly decimal _value;
 
-        public decimal Value => _amount;
+        public decimal Value => _value;
 
         public Amount(string rawAmount)
         {
             try
             {
-                _amount = Convert.ToDecimal(rawAmount, SingaporeanFormatProvider.Instance);
+                _value = Convert.ToDecimal(rawAmount, SingaporeanFormatProvider.Instance);
             }
             catch
             {
                 throw new NotAValidDecimalException();
             }
-            if (_amount <= 0)
+            if (_value <= 0)
                 throw new NegativeAmountException();
-            if (rawAmount.Length > Format(_amount).TrimStart().Length)
+            if (rawAmount.Length > Format(_value).TrimStart().Length)
                 throw new TooManyDecimalsException();
         }
 
-        public override string ToString() => Format(_amount);
+        public override string ToString() => Format(_value);
 
-        private static string Format(decimal amount) => string.Format(SingaporeanFormatProvider.Instance, "{0,6:##0.00}", amount);
+        private static string Format(decimal amount) => string.Format(SingaporeanFormatProvider.Instance, "{0:##0.00}", amount);
         internal class NotAValidDecimalException : Exception { }
         internal class TooManyDecimalsException : Exception { }
         internal class NegativeAmountException : Exception { }

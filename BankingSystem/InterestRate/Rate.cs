@@ -1,20 +1,26 @@
-﻿using System.Globalization;
-
-namespace BankingSystem.InterestRule
+﻿namespace BankingSystem.InterestRule
 {
     internal class Rate
     {
         private readonly decimal _value;
+
+        public decimal Value => _value;
+
         public Rate(string rawRate)
         {
-            var isDecimal = decimal.TryParse(rawRate, NumberStyles.AllowDecimalPoint, SingaporeanFormatProvider.Instance, out _value);
-            if (!isDecimal)
+            try
+            {
+                _value = Convert.ToDecimal(rawRate, SingaporeanFormatProvider.Instance);
+            }
+            catch
+            {
                 throw new NotAValidDecimalException();
-            if (_value <= 0 ||  _value >= 100)
+            }
+            if (_value <= 0 || _value >= 100)
                 throw new OutOfRangeException();
         }
 
-        public override string ToString() => string.Format(SingaporeanFormatProvider.Instance, "{0,8:##0.00}", _value);
+        public override string ToString() => string.Format(SingaporeanFormatProvider.Instance, "{0:##0.00}", _value);
 
         internal class NotAValidDecimalException : Exception { }
         internal class OutOfRangeException : Exception { }

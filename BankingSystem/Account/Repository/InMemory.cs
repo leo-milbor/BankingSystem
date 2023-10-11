@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using BankingSystem.Account.UseCases;
+﻿using BankingSystem.Account.UseCases;
 
 namespace BankingSystem.Account.Repository
 {

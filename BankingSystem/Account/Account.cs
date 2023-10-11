@@ -8,6 +8,7 @@ namespace BankingSystem.Account
         private readonly Transactions _transactions;
 
         public string Name => _name;
+        public IEnumerable<Transaction> Transactions => _transactions.Value;
 
         public Account(string name, Transactions transactions)
         {

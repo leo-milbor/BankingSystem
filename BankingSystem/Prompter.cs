@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace BankingSystem
+﻿namespace BankingSystem
 {
     internal interface IWriter
     {

@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Fromater\" />
+    <Folder Include="PrintStatement\" />
+  </ItemGroup>
+
 </Project>

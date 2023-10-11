@@ -1,5 +1,4 @@
-﻿using System.Text;
-
+﻿using BankingSystem.InterestRule;
 using BankingSystem.InterestRule.UseCases;
 
 namespace BankingSystemTests.InterestRuleTests.UseCasesTests
@@ -9,11 +8,10 @@ namespace BankingSystemTests.InterestRuleTests.UseCasesTests
         [Fact]
         public void User_can_define_new_interest_rule()
         {
-            var expectedOutput = new StringBuilder()
-                .Append("Interest rules:").AppendLine()
-                .Append("| Date | RuleId | Rate(%) |").AppendLine()
-                .Append("| 20230101 | RULE01 | 1.95 |")
-                .ToString();
+            IEnumerable<InterestRuleDTO> expectedOutput = new InterestRuleDTO[1]
+            {
+                new InterestRuleDTO("RULE01", new DateOnly(2023, 01, 01), 1.95m)
+            };
             var ruleRepository = new InMemoryInterestRuleRepository();
             var useCase = new DefineInterestRuleUseCase(ruleRepository);
 
@@ -22,19 +20,19 @@ namespace BankingSystemTests.InterestRuleTests.UseCasesTests
             Assert.Equal(expectedOutput, output);
             var dbRules = ruleRepository.GetAll();
             Assert.Equal(1, dbRules.Count);
-            Assert.Equal(expectedOutput, dbRules.First().ToString());
+            var dbInterestRule = dbRules.First();
+            Assert.Equal(expectedOutput.First(), ToDTO(dbInterestRule));
         }
 
         [Fact]
         public void A_new_interest_rule_at_a_same_date_of_a_previous_one_replaces_it()
         {
-            var expectedOutput = new StringBuilder()
-                .Append("Interest rules:").AppendLine()
-                .Append("| Date | RuleId | Rate(%) |").AppendLine()
-                .Append("| 20230101 | RULE01 | 1.95 |").AppendLine()
-                .Append("| 20230520 | RULE04 | 2.05 |").AppendLine()
-                .Append("| 20230615 | RULE03 | 2.20 |")
-                .ToString();
+            IEnumerable<InterestRuleDTO> expectedOutput = new InterestRuleDTO[3]
+            {
+                new InterestRuleDTO("RULE01", new DateOnly(2023, 01, 01), 1.95m),
+                new InterestRuleDTO("RULE04", new DateOnly(2023, 05, 20), 2.05m),
+                new InterestRuleDTO("RULE03", new DateOnly(2023, 06, 15), 2.20m)
+            };
             var ruleRepository = new InMemoryInterestRuleRepository();
             var useCase = new DefineInterestRuleUseCase(ruleRepository);
             useCase.Apply("20230101 RULE01 1.95");
@@ -45,9 +43,12 @@ namespace BankingSystemTests.InterestRuleTests.UseCasesTests
 
             var output = useCase.Apply("20230520 RULE04 2.05");
 
-            Assert.Equal(expectedOutput, output);
+            Assert.Equal(expectedOutput, output.ToArray());
             dbRules = ruleRepository.GetAll();
             Assert.Equal(3, dbRules.Count);
         }
+
+        private static InterestRuleDTO ToDTO(InterestRule interestRule) =>
+            new(interestRule.Id, interestRule.Date, interestRule.Rate);
     }
 }

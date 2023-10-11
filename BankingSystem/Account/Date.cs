@@ -5,16 +5,18 @@ namespace BankingSystem.Account
     internal class Date : IEquatable<Date?>, IComparable<Date>
     {
         private const string _format = "yyyyMMdd";
-        private readonly DateTime _date;
+        private readonly DateOnly _date;
+
+        public DateOnly Value => _date;
 
         public Date(string rawDate)
         {
-            var isCorrectDate = DateTime.TryParseExact(rawDate, _format, SingaporeanFormatProvider.Instance, DateTimeStyles.AssumeLocal, out _date);
+            // DateOnly.TryParseExact won't work as expected, so I resorted to DateTime for parsing.
+            var isCorrectDate = DateTime.TryParseExact(rawDate, _format, SingaporeanFormatProvider.Instance, DateTimeStyles.AssumeLocal, out var date);
             if (!isCorrectDate)
                 throw new NotAValidDateFormatException();
+            _date = new DateOnly(date.Year, date.Month, date.Day);
         }
-
-        public override string ToString() => _date.ToString(_format, SingaporeanFormatProvider.Instance);
 
         #region Equality and comparison
         public override bool Equals(object? obj)

@@ -1,33 +1,33 @@
-﻿using System.Text;
-
-using BankingSystem.Account;
+﻿using BankingSystem.Account;
 
 namespace BankingSystemTests.AccountTests
 {
     public class TransactionsTests
     {
         [Fact]
-        public void Transactions_can_be_printed()
+        public void Transactions_can_be_added()
         {
-            var expected = new StringBuilder()
-                .Append("| Date     | Txn Id      | Type | Amount |").AppendLine()
-                .Append("| 20231007 | 20231007-01 | D    | 100.00 |").AppendLine()
-                .Append("| 20231007 | 20231007-02 | W    |  50.00 |").ToString();
+            var expected = new List<Transaction>()
+            {
+                new Transaction(1, new Date("20231007"),new TransactionType("D"), new Amount("100")),
+                new Transaction(2, new Date("20231007"),new TransactionType("W"), new Amount("50"))
+            };
             var t1 = new Transaction(1, new Date("20231007"), new TransactionType("D"), new Amount("100"));
             var t2 = new Transaction(2, new Date("20231007"), new TransactionType("W"), new Amount("50"));
             var t = new Transactions(t1);
             t.Add(t2);
 
-            Assert.Equal(expected, t.ToString());
+            Assert.Equal(expected, t.Value, new TransactionsEqualityComparer());
         }
 
         [Fact]
         public void Transactions_can_be_filtered_by_date()
         {
-            var expected = new StringBuilder()
-                .Append("| Date     | Txn Id      | Type | Amount |").AppendLine()
-                .Append("| 20231007 | 20231007-01 | D    | 100.00 |").AppendLine()
-                .Append("| 20231007 | 20231007-02 | W    |  50.00 |").ToString();
+            var expected = new List<Transaction>()
+            {
+                new Transaction(1, new Date("20231007"),new TransactionType("D"), new Amount("100")),
+                new Transaction(2, new Date("20231007"),new TransactionType("W"), new Amount("50"))
+            };
             var t1 = new Transaction(1, new Date("20231007"), new TransactionType("D"), new Amount("100"));
             var t2 = new Transaction(2, new Date("20231007"), new TransactionType("W"), new Amount("50"));
             var t3 = new Transaction(1, new Date("20231014"), new TransactionType("D"), new Amount("150"));
@@ -37,7 +37,7 @@ namespace BankingSystemTests.AccountTests
 
             var filtered = t.AtDate(new Date("20231007"));
 
-            Assert.Equal(expected, filtered.ToString());
+            Assert.Equal(expected, filtered.Value, new TransactionsEqualityComparer());
         }
 
         [Fact]

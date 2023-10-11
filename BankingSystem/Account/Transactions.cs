@@ -1,16 +1,14 @@
-﻿using System.Text;
-
-namespace BankingSystem.Account
+﻿namespace BankingSystem.Account
 {
     internal class Transactions
     {
         private readonly IList<Transaction> _transactions;
 
         public bool Empty => _transactions.Count == 0;
-
         public bool HasNegtiveBalance => _transactions
             .OrderBy(t => t.Date)
-            .Sum(t => t.Amount) < 0;
+            .Sum(SumByAmount) < 0;
+        public IEnumerable<Transaction> Value => new List<Transaction>(_transactions);
 
         public void Add(Transaction transaction)
         {
@@ -41,14 +39,6 @@ namespace BankingSystem.Account
             return transaction.RunningNumber;
         }
 
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("| Date     | Txn Id      | Type | Amount |");
-            foreach (var transaction in _transactions.OrderBy(t => t.Date).Select(t => t.ToString()))
-                sb.AppendLine(transaction);
-
-            return sb.ToString().TrimEnd();
-        }
+        private static decimal SumByAmount(Transaction transaction) => transaction.IsWithdrawal ? -transaction.Amount : transaction.Amount;
     }
 }

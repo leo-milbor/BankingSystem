@@ -1,4 +1,9 @@
-﻿namespace BankingSystem.Account.UseCases
+﻿using static BankingSystem.Account.Account;
+using static BankingSystem.Account.Amount;
+using static BankingSystem.Account.Date;
+using static BankingSystem.Account.TransactionType;
+
+namespace BankingSystem.Account.UseCases
 {
     internal interface IAccountRepository
     {
@@ -6,6 +11,8 @@
         Account? Get(string account);
         void Update(Account account);
     }
+    internal record TransactionDTO(int RunningNumber, DateOnly Date, string Type, decimal amount);
+    internal record AccountDTO(string Id, IEnumerable<TransactionDTO> Transactions);
     internal class InputTransactionUseCase
     {
         private readonly IAccountRepository _accounRepository;
@@ -14,15 +21,38 @@
         {
             _accounRepository = accounRepository;
         }
-
-        public string Apply(string input)
+        public AccountDTO Apply(string input)
         {
             var inputs = input.Split(' ');
             if (inputs.Length != 4)
-                return "Not enough arguments to create an account.";
+                throw new UseCaseException("Not enough arguments to create an account.");
+            AccountDTO dto;
+            try
+            {
+                dto = Process(inputs);
+            }
+            catch (Exception e)
+            {
+                var message = e switch
+                {
+                    NotAValidDateFormatException => "Invalid date, should be in YYYYMMdd format.",
+                    NotAValidTransactionTypeException => "Invalid type, D for deposit, W for withdrawal.",
+                    NotAValidDecimalException => "Invalid amount, should be a correct decimal number.",
+                    TooManyDecimalsException => "Invalid amount, decimals are allowed up to 2 decimal places.",
+                    NegativeAmountException => "Invalid amount, must be greater than zero.",
+                    EmptyTransactionsException =>"Invalid account, must have at least one transaction.",
+                    NegativeBalanceException => "Invalid transaction, balance should not be less than 0.",
+                    _ => "An unknown error occured."
+                } ;
+                throw new UseCaseException(message);
+            }
+            return dto;
+        }
 
-            Date date = new Date(inputs[0]);
+        private AccountDTO Process(string[] inputs)
+        {
             string accountName = inputs[1];
+            Date date = new Date(inputs[0]);
             TransactionType transactionType = new TransactionType(inputs[2]);
             Amount amount = new Amount(inputs[3]);
 
@@ -33,19 +63,34 @@
                 return UpdateAccountWithNewTransaction(existingAccount, date, transactionType, amount);
         }
 
-        private string UpdateAccountWithNewTransaction(Account existingAccount, Date date, TransactionType transactionType, Amount amount)
+        private AccountDTO UpdateAccountWithNewTransaction(Account existingAccount, Date date, TransactionType transactionType, Amount amount)
         {
             existingAccount.AddTransaction(date, transactionType, amount);
             _accounRepository.Update(existingAccount);
-            return existingAccount.ToString();
+            return ToDTO(existingAccount);
         }
 
-        private string AddNewAccount(string accountName, Date date, TransactionType transactionType, Amount amount)
+        private AccountDTO AddNewAccount(string accountName, Date date, TransactionType transactionType, Amount amount)
         {
             var transaction = new Transaction(1, date, transactionType, amount);
             var account = new Account(accountName, transaction);
             _accounRepository.Add(account);
-            return account.ToString();
+            return ToDTO(account);
+        }
+
+        private static AccountDTO ToDTO(Account account)
+        {
+            var transactions = account.Transactions.Select(ToDTO);
+            return new AccountDTO(account.Name, transactions);
+        }
+
+        private static TransactionDTO ToDTO(Transaction transaction)
+        {
+            return new TransactionDTO(
+                transaction.RunningNumber,
+                transaction.Date.Value,
+                transaction.Type,
+                transaction.Amount);
         }
     }
 }

@@ -2,9 +2,13 @@
 {
     internal class InterestRule : IEquatable<InterestRule?>
     {
-        private string _id;
-        private Date _date;
-        private Rate _rate;
+        private readonly string _id;
+        private readonly Date _date;
+        private readonly Rate _rate;
+
+        public decimal Rate => _rate.Value;
+        public DateOnly Date => _date.Value;
+        public string Id => _id;
 
         public InterestRule(string id, Date date, Rate rate)
         {
