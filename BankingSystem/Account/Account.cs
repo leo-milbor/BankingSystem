@@ -2,17 +2,17 @@
 {
     internal class Account
     {
-        private readonly string _name;
+        private readonly string _id;
         private readonly Transactions _transactions;
 
-        public string Name => _name;
+        public string Id => _id;
         public IEnumerable<Transaction> Transactions => _transactions.Value;
 
         public Account(string name, Transactions transactions)
         {
             if (transactions.Empty)
                 throw new EmptyTransactionsException();
-            _name = name;
+            _id = name;
             _transactions = transactions;
         }
 
@@ -20,7 +20,7 @@
         {
             if (transaction.IsWithdrawal)
                 throw new NegativeBalanceException();
-            _name = name;
+            _id = name;
             _transactions = new Transactions(transaction);
         }
 

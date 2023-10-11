@@ -35,7 +35,7 @@ namespace BankingSystemTests.AccountTests
             a.AddTransaction(new Date("20231007"), new TransactionType("W"), new Amount("50"));
             a.AddTransaction(new Date("20231023"), new TransactionType("D"), new Amount("25"));
 
-            Assert.Equal("AC001", a.Name);
+            Assert.Equal("AC001", a.Id);
             Assert.Equal(expectedTransactions, a.Transactions.ToList(), new TransactionsEqualityComparer());
         }
 

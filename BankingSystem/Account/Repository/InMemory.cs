@@ -21,7 +21,7 @@ namespace BankingSystem.Account.Repository
 
         public Account? Get(string account)
         {
-            return _accounts.FirstOrDefault(a => a.Name == account);
+            return _accounts.FirstOrDefault(a => a.Id == account);
         }
 
         public void Update(Account account)

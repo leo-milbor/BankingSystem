@@ -50,7 +50,7 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
             Assert.Equal(expectedOutput.Transactions, output.Transactions.ToList());
             var dbAccounts = accountRepository.GetAll();
             Assert.Equal(2, dbAccounts.Count);
-            var dbActual = ToDTO(dbAccounts.First(a => a.Name == "AC001"));
+            var dbActual = ToDTO(dbAccounts.First(a => a.Id == "AC001"));
             Assert.Equal(expectedOutput.Id, dbActual.Id);
             Assert.Equal(expectedOutput.Transactions, dbActual.Transactions.ToList());
         }
@@ -80,7 +80,7 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
         private static AccountDTO ToDTO(Account account)
         {
             var transactions = account.Transactions.Select(ToDTO);
-            return new AccountDTO(account.Name, transactions);
+            return new AccountDTO(account.Id, transactions);
         }
 
         private static TransactionDTO ToDTO(Transaction transaction)

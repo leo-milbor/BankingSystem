@@ -13,7 +13,7 @@ namespace BankingSystem.Account.UseCases
     }
     internal record TransactionDTO(int RunningNumber, DateOnly Date, string Type, decimal amount);
     internal record AccountDTO(string Id, IEnumerable<TransactionDTO> Transactions);
-    internal class InputTransactionUseCase
+    internal class InputTransactionUseCase : IUseCase<AccountDTO>
     {
         private readonly IAccountRepository _accounRepository;
 
@@ -81,7 +81,7 @@ namespace BankingSystem.Account.UseCases
         private static AccountDTO ToDTO(Account account)
         {
             var transactions = account.Transactions.Select(ToDTO);
-            return new AccountDTO(account.Name, transactions);
+            return new AccountDTO(account.Id, transactions);
         }
 
         private static TransactionDTO ToDTO(Transaction transaction)

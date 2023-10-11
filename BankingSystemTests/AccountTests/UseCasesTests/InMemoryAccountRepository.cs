@@ -23,7 +23,7 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
 
         public Account? Get(string account)
         {
-            return _accounts.FirstOrDefault(a => a.Name == account);
+            return _accounts.FirstOrDefault(a => a.Id == account);
         }
 
         public ISet<Account> GetAll()
@@ -43,12 +43,12 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
         {
             if (x == null && y == null) return false;
             if (x == null || y == null) return false;
-            return x.Name == y.Name;
+            return x.Id == y.Id;
         }
 
         public int GetHashCode([DisallowNull] Account obj)
         {
-            return obj.Name.GetHashCode();
+            return obj.Id.GetHashCode();
         }
     }
 }

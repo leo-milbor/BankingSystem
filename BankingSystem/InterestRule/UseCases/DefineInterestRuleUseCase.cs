@@ -11,7 +11,7 @@ namespace BankingSystem.InterestRule.UseCases
     }
     internal record InterestRuleDTO(string Id, DateOnly Date, decimal Rate);
 
-    internal class DefineInterestRuleUseCase
+    internal class DefineInterestRuleUseCase : IUseCase<IEnumerable<InterestRuleDTO>>
     {
         private readonly IInterestRuleRepository _repository;
 
