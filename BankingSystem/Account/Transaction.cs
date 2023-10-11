@@ -12,7 +12,7 @@ namespace BankingSystem.Account
 
         public int RunningNumber => _runningNumber;
         public Date Date => _date;
-        public string Type => _type.ToString();
+        public string Type => _type.Value;
         public bool IsWithdrawal => _type.IsWithdrawal;
         public decimal Amount => _amount.Value;
 

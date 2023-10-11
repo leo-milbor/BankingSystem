@@ -22,8 +22,6 @@
                 throw new TooManyDecimalsException();
         }
 
-        public override string ToString() => Format(_value);
-
         private static string Format(decimal amount) => string.Format(SingaporeanFormatProvider.Instance, "{0:##0.00}", amount);
         internal class NotAValidDecimalException : Exception { }
         internal class TooManyDecimalsException : Exception { }

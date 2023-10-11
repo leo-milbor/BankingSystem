@@ -9,8 +9,8 @@ namespace BankingSystemTests.AccountTests
         public bool Equals(Transaction? x, Transaction? y)
         {
             if (ReferenceEquals(x, y)) return true;
-            if (ReferenceEquals(x, null)) return false;
-            if (ReferenceEquals(y, null)) return false;
+            if (x is null) return false;
+            if (y is null) return false;
             return x.Date.Value == y.Date.Value && x.RunningNumber == y.RunningNumber && x.Type == y.Type && x.Amount == y.Amount;
         }
 
@@ -25,9 +25,11 @@ namespace BankingSystemTests.AccountTests
         public bool Equals(IEnumerable<Transaction>? x, IEnumerable<Transaction>? y)
         {
             if (ReferenceEquals(x, y)) return true;
-            if (ReferenceEquals(x, null)) return false;
-            if (ReferenceEquals(y, null)) return false;
-            return x.SequenceEqual(y, new TransactionEqualityComparer());
+            if (x is null) return false;
+            if (y is null) return false;
+            var orderedX = x.OrderBy(t => t.Date.Value).ThenBy(t => t.RunningNumber);
+            var orderedY = y.OrderBy(t => t.Date.Value).ThenBy(t => t.RunningNumber);
+            return orderedX.SequenceEqual(orderedY, new TransactionEqualityComparer());
         }
 
         public int GetHashCode([DisallowNull] IEnumerable<Transaction> obj)

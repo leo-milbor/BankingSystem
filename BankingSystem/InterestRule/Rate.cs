@@ -20,8 +20,6 @@
                 throw new OutOfRangeException();
         }
 
-        public override string ToString() => string.Format(SingaporeanFormatProvider.Instance, "{0:##0.00}", _value);
-
         internal class NotAValidDecimalException : Exception { }
         internal class OutOfRangeException : Exception { }
     }

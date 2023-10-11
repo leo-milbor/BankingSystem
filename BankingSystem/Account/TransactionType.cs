@@ -15,7 +15,7 @@
 
         public bool IsWithdrawal => _type == 'W';
 
-        public override string ToString() => _type.ToString();
+        public string Value => _type.ToString();
 
         internal class NotAValidTransactionTypeException : Exception { }
     }

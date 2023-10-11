@@ -9,7 +9,7 @@ namespace BankingSystemTests.InterestRuleTests
         {
             var date = new Date("20230626");
 
-            Assert.Equal("20230626", date.ToString());
+            Assert.Equal(new DateOnly(2023,06,26), date.Value);
         }
 
         [Theory]

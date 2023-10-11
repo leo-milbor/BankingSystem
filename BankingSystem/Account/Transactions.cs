@@ -26,7 +26,7 @@
 
         public Transactions AtDate(Date date)
         {
-            return new Transactions(_transactions.Where(t => t.Date == date));
+            return new Transactions(_transactions.Where(t => t.Date.Value == date.Value));
         }
 
         public int MaxRunningNumber()
