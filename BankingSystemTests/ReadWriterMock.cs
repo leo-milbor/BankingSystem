@@ -14,7 +14,7 @@ namespace BankingSystemTests
     {
         private readonly List<string> _outputs = new();
 
-        public static StringWriter Instance => new StringWriter();
+        public static StringWriter Instance => new();
 
         public void Write(string value)
         {

@@ -11,7 +11,8 @@ namespace BankingSystemTests
 [T] Input transactions 
 [I] Define interest rules
 [P] Print statement
-[Q] Quit";
+[Q] Quit
+>";
             var writer = StringWriter.Instance;
             var reader = new ReaderMock();
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -47,7 +48,8 @@ Is there anything else you'd like to do?
 [T] Input transactions 
 [I] Define interest rules
 [P] Print statement
-[Q] Quit";
+[Q] Quit
+>";
             var writer = StringWriter.Instance;
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -63,7 +65,8 @@ Is there anything else you'd like to do?
         public void User_enter_T_for_transactions_menu(string readValue)
         {
             const string expected = @"Please enter transaction details in <Date> <Account> <Type> <Amount> format 
-(or enter blank to go back to main menu):";
+(or enter blank to go back to main menu):
+>";
             var writer = StringWriter.Instance;
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -94,7 +97,8 @@ Is there anything else you'd like to do?
         public void User_enter_I_for_interest_rules_menu(string readValue)
         {
             const string expected = @"Please enter interest rules details in <Date> <RuleId> <Rate in %> format 
-(or enter blank to go back to main menu):";
+(or enter blank to go back to main menu):
+>";
             var writer = StringWriter.Instance;
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -110,7 +114,8 @@ Is there anything else you'd like to do?
         public void User_enter_P_for_print_statement_menu(string readValue)
         {
             const string expected = @"Please enter account and month to generate the statement <Account> <Year><Month>
-(or enter blank to go back to main menu):";
+(or enter blank to go back to main menu):
+>";
             var writer = StringWriter.Instance;
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
