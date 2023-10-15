@@ -9,18 +9,56 @@
         public Statement(Account account, IEnumerable<InterestRule> rules, DateOnly date)
         {
             Id = account.Id;
+            var orderedTransactions = account.Transactions.Where(t => t.Date >= date).OrderBy(t => t.Date);
+            var orderedRules = rules.Where(r => r.Date < date.AddMonths(1)).OrderBy(r => r.Date);
             _transactions = new List<Transaction>();
-            _transactions.AddRange(account.Transactions);
+            _transactions.AddRange(orderedTransactions);
 
-            var transaction = _transactions.First();
-            var transactionDate = transaction.Date;
-            var balance = transaction.Balance;
-            var interest = daysToEndOfMonth(transactionDate) * balance * (rules.First().Rate / 100) / 365;
+            decimal interest = 0;
+            foreach (var transaction in orderedTransactions)
+            {
+                foreach (var rule in orderedRules)
+                {
+                    var transactionDate = transaction.Date;
+                    var balance = transaction.Balance;
+                    var daysOfInterests = DaysOfInterests(transaction, orderedTransactions, rule, orderedRules);
+                    interest += Math.Round(daysOfInterests * balance * (rule.Rate / 100) / 365, 2);
+                }
+            }
 
-            _transactions.Add(NewInterestTransaction(date, balance, interest));
+            var lastBalance = orderedTransactions.Last().Balance;
+            _transactions.Add(NewInterestTransaction(date, lastBalance, interest));
         }
 
-        private static int daysToEndOfMonth(DateOnly date)
+        private static int DaysOfInterests(Transaction transaction, IOrderedEnumerable<Transaction> transactions, InterestRule currentRule, IOrderedEnumerable<InterestRule> rules)
+        {
+            int daysToNextElement = Math.Min(DaysToNextTransaction(transaction, transactions), DaysToNextRule(transaction, currentRule, rules));
+            var latestDate = transaction.Date > currentRule.Date ? transaction.Date : currentRule.Date;
+            return Math.Min(DaysToEndOfMonth(latestDate), daysToNextElement);
+        }
+
+        private static int DaysToNextRule(Transaction transaction, InterestRule currentRule, IOrderedEnumerable<InterestRule> rules)
+        {
+            foreach (var rule in rules.Where(r => r.Date > currentRule.Date))
+            {
+                return rule.Date.Day - Math.Max(currentRule.Date.Day, transaction.Date.Day);
+            }
+            // If no next rule, let’s consider it too far in the future instead to ease calculus.
+            return int.MaxValue;
+        }
+
+        private static int DaysToNextTransaction(Transaction transaction, IOrderedEnumerable<Transaction> dateOrderedTransactions)
+        {
+            foreach (var t in dateOrderedTransactions
+                .Where(t => t.Id != transaction.Id && t.Date >= transaction.Date))
+            {
+                return t.Date.Day - transaction.Date.Day;
+            }
+            // If no next transaction, let’s consider it too far in the future instead to ease calculus.
+            return int.MaxValue;
+        }
+
+        private static int DaysToEndOfMonth(DateOnly date)
         {
             return EndOfMonth(date).Day - date.Day;
         }
@@ -32,7 +70,7 @@
 
         private static Transaction NewInterestTransaction(DateOnly dateOfRule, decimal previousBalance, decimal interest)
         {
-            return new Transaction("", EndOfMonth(dateOfRule), "I", previousBalance + interest, interest);
+            return new Transaction("", EndOfMonth(dateOfRule), "I", interest, previousBalance + interest);
         }
 
         //private void calc()
@@ -72,7 +110,7 @@
     }
     internal record Account(string Id, IEnumerable<Transaction> Transactions);
 
-    internal record Transaction(string Id, DateOnly Date, string Type, decimal Balance, decimal Amount);
+    internal record Transaction(string Id, DateOnly Date, string Type, decimal Amount, decimal Balance);
 
     internal record InterestRule(DateOnly Date, decimal Rate);
 }
