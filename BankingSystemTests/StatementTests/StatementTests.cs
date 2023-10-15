@@ -5,6 +5,29 @@ namespace BankingSystemTests.StatementTests
     public class StatementTests
     {
         [Fact]
+        public void Statement_for_1_transaction_at_1st_of_month_1_interest_rule()
+        {
+            decimal interest = Math.Round(100 * 0.1m * 31 / 365, 2);
+            var expected = new List<Transaction>()
+            {
+                new Transaction("20231010-01", new DateOnly(2023, 10, 01), 1, "D", 100, 100),
+                new Transaction("", new DateOnly(2023, 10, 31), 1, "I", interest, 100 + interest)
+            };
+            var account = new Account("AC001", new List<Transaction>()
+            {
+                new Transaction("20231010-01", new DateOnly(2023, 10, 01), 1, "D", 100, 100)
+            });
+            var rule = new InterestRule(new DateOnly(2023, 09, 03), 10m);
+
+            var statement = new Statement(account, new List<InterestRule>() { rule }, new DateOnly(2023, 10, 01));
+            var statementTransactions = statement.Transactions;
+
+            Assert.Equal("AC001", statement.Id);
+            Assert.Equal(2, statementTransactions.Count());
+            Assert.Equal(expected, statementTransactions.ToList());
+        }
+
+        [Fact]
         public void Statement_for_1_transaction_1_interest_rule()
         {
             decimal interest = Math.Round(100 * 0.1m * 21 / 365, 2);
@@ -30,7 +53,7 @@ namespace BankingSystemTests.StatementTests
         [Fact]
         public void Statement_for_2_transactions_1_interest_rule()
         {
-            decimal interest = Math.Round(50 * 0.1m * 5 / 365, 2) + Math.Round(100 * 0.1m * 16 / 365, 2);
+            decimal interest = Math.Round((Math.Round(50 * 0.1m * 5, 2) + Math.Round(100 * 0.1m * 16, 2)) / 365, 2);
             var expected = new List<Transaction>()
             {
                 new Transaction("20231010-01", new DateOnly(2023, 10, 10), 1, "D", 50, 50),
@@ -80,7 +103,7 @@ namespace BankingSystemTests.StatementTests
         [Fact]
         public void Statement_for_1_transactions_2_interest_rule()
         {
-            decimal interest = Math.Round(100 * 0.1m * 5 / 365, 2) +  Math.Round(100 * 0.2m * 16 / 365, 2);
+            decimal interest = Math.Round((Math.Round(100 * 0.1m * 5, 2) + Math.Round(100 * 0.2m * 16, 2)) / 365, 2);
             var expected = new List<Transaction>()
             {
                 new Transaction("20231010-01", new DateOnly(2023, 10, 10), 1, "D", 100, 100),

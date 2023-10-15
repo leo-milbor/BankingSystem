@@ -1,4 +1,6 @@
-﻿using BankingSystem.Account;
+﻿using System.Transactions;
+
+using BankingSystem.Account;
 
 namespace BankingSystem.Statement
 {
@@ -17,7 +19,7 @@ namespace BankingSystem.Statement
             _transactions = new List<Transaction>();
             _transactions.AddRange(transactionsOfMonth);
 
-            decimal interest = 0;
+            decimal anualizedInterest = 0;
             var transactionsForInterestCalculus = transactionsOfMonth
                 .Where(t => IsLastTransactionOfDay(t, transactionsOfMonth))
                 .OrderBy(t => t.Date);
@@ -27,19 +29,20 @@ namespace BankingSystem.Statement
                 var applicableRules = new List<InterestRule>() { firstApplicableRule };
                 var restOfApplicableRules = orderedRules
                     .Where(r => r.Date > firstApplicableRule.Date
-                             && r.Date.Day < DaysToNextTransaction(transaction, transactionsForInterestCalculus));
+                             && r.Date.Day < DaysToNextTransaction(transaction, DateOnly.MinValue, transactionsForInterestCalculus));
                 applicableRules.AddRange(restOfApplicableRules);
                 foreach (var rule in applicableRules.OrderBy(r => r.Date))
                 {
                     var transactionDate = transaction.Date;
                     var balance = transaction.Balance;
                     var daysOfInterests = DaysOfInterests(transaction, transactionsForInterestCalculus, rule, orderedRules);
-                    interest += Math.Round(daysOfInterests * balance * (rule.Rate / 100) / 365, 2);
+                    var interestForTransaction = Math.Round(daysOfInterests * balance * (rule.Rate / 100), 2);
+                    anualizedInterest += interestForTransaction;
                 }
             }
 
             var lastBalance = transactionsForInterestCalculus.Last().Balance;
-            _transactions.Add(NewInterestTransaction(date, lastBalance, interest));
+            _transactions.Add(NewInterestTransaction(date, lastBalance, Math.Round(anualizedInterest / 365, 2)));
         }
 
         private static bool IsLastTransactionOfDay(Transaction transaction, IEnumerable<Transaction> transactions)
@@ -52,13 +55,16 @@ namespace BankingSystem.Statement
         private static int DaysOfInterests(Transaction transaction, IOrderedEnumerable<Transaction> transactions, InterestRule currentRule, IOrderedEnumerable<InterestRule> rules)
         {
             var daysToNextElement = DaysToNextElement(transaction, transactions, currentRule, rules);
+
+            var firstTransactionIsAt1stOfMonth = transactions.First().Date.Day == 1;
+            var endOfMonthOffset = firstTransactionIsAt1stOfMonth ? 1 : 0;
             var latestDate = transaction.Date > currentRule.Date ? transaction.Date : currentRule.Date;
-            return Math.Min(DaysToEndOfMonth(latestDate), daysToNextElement);
+            return Math.Min(DaysToEndOfMonth(latestDate, endOfMonthOffset), daysToNextElement);
         }
 
         private static int DaysToNextElement(Transaction transaction, IOrderedEnumerable<Transaction> transactions, InterestRule currentRule, IOrderedEnumerable<InterestRule> rules)
         {
-            return Math.Min(DaysToNextTransaction(transaction, transactions), DaysToNextRule(transaction, currentRule, rules));
+            return Math.Min(DaysToNextTransaction(transaction, currentRule.Date, transactions), DaysToNextRule(transaction, currentRule, rules));
         }
 
         private static int DaysToNextRule(Transaction transaction, InterestRule currentRule, IOrderedEnumerable<InterestRule> rules)
@@ -74,26 +80,29 @@ namespace BankingSystem.Statement
             return int.MaxValue;
         }
 
-        private static int DaysToNextTransaction(Transaction transaction, IOrderedEnumerable<Transaction> dateOrderedTransactions)
+        private static int DaysToNextTransaction(Transaction transaction, DateOnly ruleDate, IOrderedEnumerable<Transaction> dateOrderedTransactions)
         {
+            var currentPeriodStart = MaxDate(transaction.Date, ruleDate);
             foreach (var t in dateOrderedTransactions
                 .Where(t => t.Id != transaction.Id && t.Date >= transaction.Date))
             {
-                return t.Date.Day - transaction.Date.Day;
+                return t.Date.Day - currentPeriodStart.Day;
             }
             // If no next transaction, let’s consider it too far in the future instead to ease calculus.
             return int.MaxValue;
         }
 
-        private static int DaysToEndOfMonth(DateOnly date)
+        private static int DaysToEndOfMonth(DateOnly date, int endOfMonthOffset)
         {
-            return EndOfMonth(date).Day - date.Day;
+            return EndOfMonth(date).Day - date.Day + endOfMonthOffset;
         }
 
         private static DateOnly EndOfMonth(DateOnly date)
         {
             return new DateOnly(date.Year, date.Month, 1).AddMonths(1).AddDays(-1);
         }
+
+        private static DateOnly MaxDate(DateOnly x, DateOnly y) => x > y ? x : y;
 
         private static Transaction NewInterestTransaction(DateOnly dateOfRule, decimal previousBalance, decimal interest)
         {
