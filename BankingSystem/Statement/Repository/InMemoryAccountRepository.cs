@@ -34,8 +34,7 @@ namespace BankingSystem.Statement.Repository
 
         private static decimal GetBalance(AccountUS.Transaction transaction, IEnumerable<AccountUS.Transaction> transactions) => 
             transactions
-                .Where(t => t.Date.Value <= transaction.Date.Value
-                                 && t.RunningNumber < transaction.RunningNumber)
-                .Sum(t => t.Amount);
+                .Where(t => t.Date.Value <= transaction.Date.Value && t.RunningNumber <= transaction.RunningNumber)
+                .Sum(t => t.Type == "D" ? t.Amount : -t.Amount);
     }
 }

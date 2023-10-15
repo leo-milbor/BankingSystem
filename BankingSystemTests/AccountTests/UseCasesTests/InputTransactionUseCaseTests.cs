@@ -56,7 +56,7 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
         }
 
         [Theory]
-        [InlineData("", "Wrong number of argument to create an account.")]
+        [InlineData("xyz", "Wrong number of argument to create an account.")]
         [InlineData("2023/05/05 AC002 D 100.00", "Invalid date, should be in YYYYMMdd format.")]
         [InlineData("20230505 AC002 Z 100.00", "Invalid type, D for deposit, W for withdrawal.")]
         [InlineData("20230505 AC002 D hundred", "Invalid amount, should be a correct decimal number.")]

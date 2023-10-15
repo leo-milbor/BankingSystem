@@ -14,7 +14,7 @@ namespace BankingSystemTests
 [Q] Quit
 >";
             var writer = new StringWriter();
-            var reader = new ReaderMock();
+            var reader = new ReaderMock("Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
             prompt.Launch();
@@ -44,6 +44,7 @@ Have a nice day!";
         public void Invalid_user_entry_prints_previous_prompt_with_indication_of_incorrect_input(string readValue)
         {
             const string expected = @"Invalid choice.
+
 Is there anything else you'd like to do?
 [T] Input transactions 
 [I] Define interest rules
@@ -62,33 +63,30 @@ Is there anything else you'd like to do?
         [Theory]
         [InlineData("T")]
         [InlineData("t")]
-        public void User_enter_T_for_transactions_menu(string readValue)
+        public void User_enter_transaction(string readValue)
         {
-            const string expected = @"Please enter transaction details in <Date> <Account> <Type> <Amount> format 
+
+            const string expectedPrompt = @"Please enter transaction details in <Date> <Account> <Type> <Amount> format 
 (or enter blank to go back to main menu):
 >";
-            var writer = new StringWriter();
-            var reader = new ReaderMock(readValue, "Q");
-            var prompt = new Prompter(new ReadWriterMock(reader, writer));
-
-            prompt.Launch();
-
-            Assert.Equal(expected, writer.GetOutputNumber(2));
-        }
-
-        [Fact]
-        public void User_enter_transaction()
-        {
-            const string expected = @"Account: AC001
+            const string expectedOutput = @"Account: AC001
 | Date     | Txn Id      | Type | Amount |
-| 20230505 | 20230505-01 | D    | 100.00 |";
+| 20230505 | 20230505-01 | D    | 100.00 |
+
+Is there anything else you'd like to do?
+[T] Input transactions 
+[I] Define interest rules
+[P] Print statement
+[Q] Quit
+>";
             var writer = new StringWriter();
-            var reader = new ReaderMock("T", "20230505 AC001 D 100.00", "Q");
+            var reader = new ReaderMock(readValue, "20230505 AC001 D 100.00", "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
             prompt.Launch();
 
-            Assert.Equal(expected, writer.GetOutputNumber(3));
+            Assert.Equal(expectedPrompt, writer.GetOutputNumber(2));
+            Assert.Equal(expectedOutput, writer.GetOutputNumber(3));
         }
 
         [Theory]
@@ -96,16 +94,27 @@ Is there anything else you'd like to do?
         [InlineData("i")]
         public void User_enter_I_for_interest_rules_menu(string readValue)
         {
-            const string expected = @"Please enter interest rules details in <Date> <RuleId> <Rate in %> format 
+            const string expectedPrompt = @"Please enter interest rules details in <Date> <RuleId> <Rate in %> format 
 (or enter blank to go back to main menu):
 >";
+            const string expectedOutput = @"Interest rules:
+| Date     | RuleId | Rate (%) |
+| 20230615 | RULE03 |     2.20 |
+
+Is there anything else you'd like to do?
+[T] Input transactions 
+[I] Define interest rules
+[P] Print statement
+[Q] Quit
+>";
             var writer = new StringWriter();
-            var reader = new ReaderMock(readValue, "Q");
+            var reader = new ReaderMock(readValue, "20230615 RULE03 2.20", "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
             prompt.Launch();
 
-            Assert.Equal(expected, writer.GetOutputNumber(2));
+            Assert.Equal(expectedPrompt, writer.GetOutputNumber(2));
+            Assert.Equal(expectedOutput, writer.GetOutputNumber(3));
         }
 
         [Theory]
@@ -113,16 +122,40 @@ Is there anything else you'd like to do?
         [InlineData("p")]
         public void User_enter_P_for_print_statement_menu(string readValue)
         {
-            const string expected = @"Please enter account and month to generate the statement <Account> <Year><Month>
+            const string expectedPrompt = @"Please enter account and month to generate the statement <Account> <Year><Month>
 (or enter blank to go back to main menu):
 >";
+            const string expectedOutput = @"Account: AC001
+| Date     | Txn Id      | Type | Amount | Balance |
+| 20230601 | 20230601-01 | D    | 150.00 |  250.00 |
+| 20230626 | 20230626-01 | W    |  20.00 |  230.00 |
+| 20230626 | 20230626-02 | W    | 100.00 |  130.00 |
+| 20230630 |             | I    |   0.39 |  130.39 |
+
+Is there anything else you'd like to do?
+[T] Input transactions 
+[I] Define interest rules
+[P] Print statement
+[Q] Quit
+>";
             var writer = new StringWriter();
-            var reader = new ReaderMock(readValue, "Q");
+            var reader = new ReaderMock(
+                "T", "20230505 AC002 D 100.00",
+                "T", "20230505 AC001 D 100.00",
+                "T", "20230601 AC001 D 150.00",
+                "T", "20230626 AC001 W 20.00",
+                "T", "20230626 AC001 W 100.00",
+                "I", "20230101 RULE01 1.95",
+                "I", "20230520 RULE02 1.90",
+                "I", "20230615 RULE03 2.20",
+
+                readValue, "AC001 202306", "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
             prompt.Launch();
 
-            Assert.Equal(expected, writer.GetOutputNumber(2));
+            Assert.Equal(expectedPrompt, writer.GetOutputNumber(18));
+            Assert.Equal(expectedOutput, writer.GetOutputNumber(19));
         }
     }
 }

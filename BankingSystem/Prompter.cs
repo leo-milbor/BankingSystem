@@ -75,6 +75,8 @@ namespace BankingSystem
         {
             _readWriter.Write(prompt);
             var input = _readWriter.Read();
+            if (string.IsNullOrWhiteSpace(input))
+                return "";
             try
             {
                 var result = useCase.Apply(input);
@@ -103,7 +105,8 @@ namespace BankingSystem
 
         private const string _invalidChoice = @"Invalid choice.";
 
-        private const string _followup = @"Is there anything else you'd like to do?" + _inputChoices;
+        private const string _followup = @"
+Is there anything else you'd like to do?" + _inputChoices;
 
         private const string _inputChoices = @"
 [T] Input transactions 
