@@ -12,7 +12,7 @@ namespace BankingSystemTests
 [I] Define interest rules
 [P] Print statement
 [Q] Quit
->";
+> ";
             var writer = new StringWriter();
             var reader = new ReaderMock("Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -50,7 +50,7 @@ Is there anything else you'd like to do?
 [I] Define interest rules
 [P] Print statement
 [Q] Quit
->";
+> ";
             var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -68,7 +68,7 @@ Is there anything else you'd like to do?
 
             const string expectedPrompt = @"Please enter transaction details in <Date> <Account> <Type> <Amount> format 
 (or enter blank to go back to main menu):
->";
+> ";
             const string expectedOutput = @"Account: AC001
 | Date     | Txn Id      | Type | Amount |
 | 20230505 | 20230505-01 | D    | 100.00 |
@@ -78,7 +78,7 @@ Is there anything else you'd like to do?
 [I] Define interest rules
 [P] Print statement
 [Q] Quit
->";
+> ";
             var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "20230505 AC001 D 100.00", "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -96,7 +96,7 @@ Is there anything else you'd like to do?
         {
             const string expectedPrompt = @"Please enter interest rules details in <Date> <RuleId> <Rate in %> format 
 (or enter blank to go back to main menu):
->";
+> ";
             const string expectedOutput = @"Interest rules:
 | Date     | RuleId | Rate (%) |
 | 20230615 | RULE03 |     2.20 |
@@ -106,7 +106,7 @@ Is there anything else you'd like to do?
 [I] Define interest rules
 [P] Print statement
 [Q] Quit
->";
+> ";
             var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "20230615 RULE03 2.20", "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
@@ -124,7 +124,7 @@ Is there anything else you'd like to do?
         {
             const string expectedPrompt = @"Please enter account and month to generate the statement <Account> <Year><Month>
 (or enter blank to go back to main menu):
->";
+> ";
             const string expectedOutput = @"Account: AC001
 | Date     | Txn Id      | Type | Amount | Balance |
 | 20230601 | 20230601-01 | D    | 150.00 |  250.00 |
@@ -137,7 +137,7 @@ Is there anything else you'd like to do?
 [I] Define interest rules
 [P] Print statement
 [Q] Quit
->";
+> ";
             var writer = new StringWriter();
             var reader = new ReaderMock(
                 "T", "20230505 AC002 D 100.00",
