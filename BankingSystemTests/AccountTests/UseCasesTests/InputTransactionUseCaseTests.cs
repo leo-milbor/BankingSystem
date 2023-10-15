@@ -70,6 +70,7 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
             try
             {
                 useCase.Apply(input);
+                throw new Exception("Should have failed.");
             }
             catch (UseCaseException e)
             {

@@ -11,7 +11,7 @@ namespace BankingSystem.Account.UseCases
         Account? Get(string account);
         void Update(Account account);
     }
-    internal record TransactionDTO(int RunningNumber, DateOnly Date, string Type, decimal amount);
+    internal record TransactionDTO(int RunningNumber, DateOnly Date, string Type, decimal Amount);
     internal record AccountDTO(string Id, IEnumerable<TransactionDTO> Transactions);
     internal class InputTransactionUseCase : IUseCase<AccountDTO>
     {

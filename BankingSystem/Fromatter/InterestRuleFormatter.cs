@@ -6,8 +6,6 @@ namespace BankingSystem.Fromatter
 {
     internal class InterestRulesFormatter : IFormatter<IEnumerable<InterestRuleDTO>>
     {
-        public static InterestRulesFormatter Instance => new InterestRulesFormatter();
-
         public string Format(IEnumerable<InterestRuleDTO> value)
         {
             var ruleFormatter = new InterestRuleFormatter(8);
@@ -40,6 +38,6 @@ namespace BankingSystem.Fromatter
             rule.Date.ToString("yyyyMMdd", SingaporeanFormatProvider.Instance);
 
         private string FormatRate(InterestRuleDTO rule) =>
-            rule.Rate.ToString("0.00").PadLeft(_ratePadding);
+            rule.Rate.ToString("0.00", SingaporeanFormatProvider.Instance).PadLeft(_ratePadding);
     }
 }

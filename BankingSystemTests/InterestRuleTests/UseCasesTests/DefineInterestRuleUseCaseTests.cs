@@ -28,7 +28,7 @@ namespace BankingSystemTests.InterestRuleTests.UseCasesTests
         [Fact]
         public void A_new_interest_rule_at_a_same_date_of_a_previous_one_replaces_it()
         {
-            IEnumerable<InterestRuleDTO> expectedOutput = new InterestRuleDTO[3]
+            var expectedOutput = new InterestRuleDTO[3]
             {
                 new InterestRuleDTO("RULE01", new DateOnly(2023, 01, 01), 1.95m),
                 new InterestRuleDTO("RULE04", new DateOnly(2023, 05, 20), 2.05m),
@@ -61,6 +61,7 @@ namespace BankingSystemTests.InterestRuleTests.UseCasesTests
             try
             {
                 useCase.Apply(input);
+                throw new Exception("Should have failed.");
             }
             catch (UseCaseException e)
             {

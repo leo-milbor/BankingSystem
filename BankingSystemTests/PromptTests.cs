@@ -13,7 +13,7 @@ namespace BankingSystemTests
 [P] Print statement
 [Q] Quit
 >";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock();
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
@@ -29,7 +29,7 @@ namespace BankingSystemTests
         {
             const string expected = @"Thank you for banking with AwesomeGIC Bank.
 Have a nice day!";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock(readValue);
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
@@ -50,7 +50,7 @@ Is there anything else you'd like to do?
 [P] Print statement
 [Q] Quit
 >";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
@@ -67,7 +67,7 @@ Is there anything else you'd like to do?
             const string expected = @"Please enter transaction details in <Date> <Account> <Type> <Amount> format 
 (or enter blank to go back to main menu):
 >";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
@@ -82,7 +82,7 @@ Is there anything else you'd like to do?
             const string expected = @"Account: AC001
 | Date     | Txn Id      | Type | Amount |
 | 20230505 | 20230505-01 | D    | 100.00 |";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock("T", "20230505 AC001 D 100.00", "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
@@ -99,7 +99,7 @@ Is there anything else you'd like to do?
             const string expected = @"Please enter interest rules details in <Date> <RuleId> <Rate in %> format 
 (or enter blank to go back to main menu):
 >";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 
@@ -116,7 +116,7 @@ Is there anything else you'd like to do?
             const string expected = @"Please enter account and month to generate the statement <Account> <Year><Month>
 (or enter blank to go back to main menu):
 >";
-            var writer = StringWriter.Instance;
+            var writer = new StringWriter();
             var reader = new ReaderMock(readValue, "Q");
             var prompt = new Prompter(new ReadWriterMock(reader, writer));
 

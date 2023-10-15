@@ -14,8 +14,6 @@ namespace BankingSystemTests
     {
         private readonly List<string> _outputs = new();
 
-        public static StringWriter Instance => new();
-
         public void Write(string value)
         {
             _outputs.Add(value);

@@ -2,6 +2,8 @@
 using BankingSystem.Account.UseCases;
 using BankingSystem.InterestRule.UseCases;
 using InterestRuleRepo = BankingSystem.InterestRule.Repository;
+using BankingSystem.Statement.UseCases;
+using StatementRepo = BankingSystem.Statement.Repository;
 using BankingSystem.Fromatter;
 
 namespace BankingSystem
@@ -21,12 +23,16 @@ namespace BankingSystem
         private readonly IReadWriter _readWriter;
         private readonly InputTransactionUseCase _inputTransactionUseCase;
         private readonly DefineInterestRuleUseCase _defineInterestRuleUseCase;
+        private readonly PrintStatementUseCase _printStatementUseCase;
 
         public Prompter(IReadWriter readWriter)
         {
             _readWriter = readWriter;
-            _inputTransactionUseCase = new InputTransactionUseCase(new AccountRepo.InMemory());
-            _defineInterestRuleUseCase = new DefineInterestRuleUseCase(new InterestRuleRepo.InMemory());
+            var accounRepository = new AccountRepo.InMemory();
+            _inputTransactionUseCase = new InputTransactionUseCase(accounRepository);
+            var ruleRepository = new InterestRuleRepo.InMemory();
+            _defineInterestRuleUseCase = new DefineInterestRuleUseCase(ruleRepository);
+            _printStatementUseCase = new PrintStatementUseCase(new StatementRepo.InMemoryAccountRepository(accounRepository), new StatementRepo.InMemoryInterestRuleRepository(ruleRepository));
         }
 
 
@@ -46,12 +52,13 @@ namespace BankingSystem
                 switch (prompt)
                 {
                     case _inputTransaction:
-                        result = PlayUseCase(prompt, _inputTransactionUseCase, AccountFormatter.Instance);
+                        result = PlayUseCase(prompt, _inputTransactionUseCase, new AccountFormatter());
                         break;
                     case _interestRules:
-                        result = PlayUseCase(prompt, _defineInterestRuleUseCase, InterestRulesFormatter.Instance);
+                        result = PlayUseCase(prompt, _defineInterestRuleUseCase, new InterestRulesFormatter());
                         break;
                     case _printStatement:
+                        result = PlayUseCase(prompt, _printStatementUseCase, new PrintStatementFormatter());
                         break;
                     case _goodbye:
                         _readWriter.Write(prompt);
