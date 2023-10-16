@@ -25,24 +25,34 @@ namespace BankingSystem.Statement
                 .OrderBy(t => t.Date);
             foreach (var transaction in transactionsForInterestCalculus)
             {
-                var firstApplicableRule = orderedRules.Last(r => r.Date <= transaction.Date);
-                var applicableRules = new List<InterestRule>() { firstApplicableRule };
-                var restOfApplicableRules = orderedRules
-                    .Where(r => r.Date > firstApplicableRule.Date
-                             && r.Date.Day < DaysToNextTransaction(transaction, DateOnly.MinValue, transactionsForInterestCalculus));
-                applicableRules.AddRange(restOfApplicableRules);
+                var applicableRules = GetApplicableRules(transaction, transactionsForInterestCalculus, orderedRules);
                 foreach (var rule in applicableRules.OrderBy(r => r.Date))
                 {
-                    var transactionDate = transaction.Date;
-                    var balance = transaction.Balance;
-                    var daysOfInterests = DaysOfInterests(transaction, transactionsForInterestCalculus, rule, orderedRules);
-                    var interestForTransaction = Math.Round(daysOfInterests * balance * (rule.Rate / 100), 2);
-                    anualizedInterest += interestForTransaction;
+                    anualizedInterest += GetAnnualizedInterest(transaction, rule, transactionsForInterestCalculus, orderedRules);
                 }
             }
 
             var lastBalance = transactionsForInterestCalculus.Last().Balance;
             _transactions.Add(NewInterestTransaction(date, lastBalance, Math.Round(anualizedInterest / 365, 2)));
+        }
+
+        private static decimal GetAnnualizedInterest(Transaction transaction, InterestRule rule, IOrderedEnumerable<Transaction> transactions, IOrderedEnumerable<InterestRule> rules)
+        {
+            var balance = transaction.Balance;
+            var daysOfInterests = DaysOfInterests(transaction, transactions, rule, rules);
+            var interestForTransaction = Math.Round(daysOfInterests * balance * (rule.Rate / 100), 2);
+            return interestForTransaction;
+        }
+
+        private static IEnumerable<InterestRule> GetApplicableRules(Transaction transaction, IOrderedEnumerable<Transaction> transactionsForInterestCalculus, IOrderedEnumerable<InterestRule> orderedRules)
+        {
+            var firstApplicableRule = orderedRules.Last(r => r.Date <= transaction.Date);
+            var applicableRules = new List<InterestRule>() { firstApplicableRule };
+            var restOfApplicableRules = orderedRules
+                .Where(r => r.Date > firstApplicableRule.Date
+                         && r.Date.Day < DaysToNextTransaction(transaction, DateOnly.MinValue, transactionsForInterestCalculus));
+            applicableRules.AddRange(restOfApplicableRules);
+            return applicableRules;
         }
 
         private static bool IsLastTransactionOfDay(Transaction transaction, IEnumerable<Transaction> transactions)
