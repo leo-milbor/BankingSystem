@@ -51,6 +51,27 @@ namespace BankingSystemTests.StatementTests
         }
 
         [Fact]
+        public void Statement_for_1_transaction_0_interest_rule()
+        {
+            var expected = new List<Transaction>()
+            {
+                new Transaction("20231010-01", new DateOnly(2023, 10, 10), 1, "D", 100, 100),
+                new Transaction("", new DateOnly(2023, 10, 31), 1, "I", 0, 100)
+            };
+            var account = new Account("AC001", new List<Transaction>()
+            {
+                new Transaction("20231010-01", new DateOnly(2023, 10, 10), 1, "D", 100, 100)
+            });
+
+            var statement = new Statement(account, new List<InterestRule>(), new DateOnly(2023, 10, 01));
+            var statementTransactions = statement.Transactions;
+
+            Assert.Equal("AC001", statement.Id);
+            Assert.Equal(2, statementTransactions.Count());
+            Assert.Equal(expected, statementTransactions.ToList());
+        }
+
+        [Fact]
         public void Statement_for_2_transactions_1_interest_rule()
         {
             decimal interest = Math.Round((Math.Round(50 * 0.1m * 5, 2) + Math.Round(100 * 0.1m * 16, 2)) / 365, 2);

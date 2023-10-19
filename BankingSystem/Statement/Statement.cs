@@ -15,7 +15,7 @@ namespace BankingSystem.Statement
         {
             Id = account.Id;
             var transactionsOfMonth = account.Transactions.Where(t => t.Date >= date && t.Date.Month == date.Month);
-            var orderedRules = rules.Where(r => r.Date < date.AddMonths(1)).OrderBy(r => r.Date);
+            var orderedRules = GetApplicableRules(rules, date);
             _transactions = new List<Transaction>();
             _transactions.AddRange(transactionsOfMonth);
 
@@ -34,6 +34,16 @@ namespace BankingSystem.Statement
 
             var lastBalance = transactionsForInterestCalculus.Last().Balance;
             _transactions.Add(NewInterestTransaction(date, lastBalance, Math.Round(anualizedInterest / 365, 2)));
+        }
+
+        private static IOrderedEnumerable<InterestRule> GetApplicableRules(IEnumerable<InterestRule> rules, DateOnly date)
+        {
+            var orderedRules = rules.Where(r => r.Date < date.AddMonths(1)).OrderBy(r => r.Date);
+            orderedRules = orderedRules.Any() ? orderedRules : new List<InterestRule>()
+            {
+                new InterestRule(new DateOnly(date.Year, date.Month, 01), 0m),
+            }.OrderBy(r => r.Date);
+            return orderedRules;
         }
 
         private static decimal GetAnnualizedInterest(Transaction transaction, InterestRule rule, IOrderedEnumerable<Transaction> transactions, IOrderedEnumerable<InterestRule> rules)
