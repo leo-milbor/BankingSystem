@@ -32,11 +32,11 @@ namespace BankingSystemTests.AccountTests
             var t = new Transactions(t1);
             var a = new Account("AC001", t);
 
-            a.AddTransaction(new Date("20231007"), new TransactionType("W"), new Amount("50"));
-            a.AddTransaction(new Date("20231023"), new TransactionType("D"), new Amount("25"));
+            var actual = a.AddTransaction(new Date("20231007"), new TransactionType("W"), new Amount("50"))
+             .AddTransaction(new Date("20231023"), new TransactionType("D"), new Amount("25"));
 
-            Assert.Equal("AC001", a.Id);
-            Assert.Equal(expectedTransactions, a.Transactions.ToList(), new TransactionsEqualityComparer());
+            Assert.Equal("AC001", actual.Id);
+            Assert.Equal(expectedTransactions, actual.Transactions.ToList(), new TransactionsEqualityComparer());
         }
 
         [Fact]

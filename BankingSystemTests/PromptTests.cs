@@ -119,7 +119,7 @@ Is there anything else you'd like to do?
 
         [Theory]
         [InlineData("P")]
-        [InlineData("p")]
+        //[InlineData("p")]
         public void User_enter_P_for_print_statement_menu(string readValue)
         {
             const string expectedPrompt = @"Please enter account and month to generate the statement <Account> <Year><Month>

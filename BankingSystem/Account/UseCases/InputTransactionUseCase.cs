@@ -65,9 +65,9 @@ namespace BankingSystem.Account.UseCases
 
         private AccountDTO UpdateAccountWithNewTransaction(Account existingAccount, Date date, TransactionType transactionType, Amount amount)
         {
-            existingAccount.AddTransaction(date, transactionType, amount);
-            _accounRepository.Update(existingAccount);
-            return ToDTO(existingAccount);
+            var updated = existingAccount.AddTransaction(date, transactionType, amount);
+            _accounRepository.Update(updated);
+            return ToDTO(updated);
         }
 
         private AccountDTO AddNewAccount(string accountName, Date date, TransactionType transactionType, Amount amount)

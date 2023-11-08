@@ -2,17 +2,19 @@
 {
     internal class Transactions
     {
-        private readonly IList<Transaction> _transactions;
+        private readonly IEnumerable<Transaction> _transactions;
 
-        public bool Empty => _transactions.Count == 0;
+        public bool Empty => _transactions.Count() == 0;
         public bool HasNegtiveBalance => _transactions
             .OrderBy(t => t.Date)
             .Sum(SumByAmount) < 0;
         public IEnumerable<Transaction> Value => new List<Transaction>(_transactions);
 
-        public void Add(Transaction transaction)
+        public Transactions Add(Transaction transaction)
         {
-            _transactions.Add(transaction);
+            var result = _transactions.ToList();
+            result.Add(transaction);
+            return new Transactions(result);
         }
 
         private Transactions(IEnumerable<Transaction> transactions)

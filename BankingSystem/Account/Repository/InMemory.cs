@@ -26,7 +26,10 @@ namespace BankingSystem.Account.Repository
 
         public void Update(Account account)
         {
-            // account is already updated for an in memory database.
+            var actual = Get(account.Id);
+            if (actual is null) return;
+            _accounts.Remove(actual);
+            _accounts.Add(account);
         }
     }
 }

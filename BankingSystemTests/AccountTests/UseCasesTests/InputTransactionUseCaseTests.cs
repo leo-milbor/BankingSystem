@@ -55,6 +55,23 @@ namespace BankingSystemTests.AccountTests.UseCasesTests
             Assert.Equal(expectedOutput.Transactions, dbActual.Transactions.ToList());
         }
 
+        [Fact]
+        public void User_cannot_input_transaction_to_negative_balance()
+        {
+            var expectedTransaction = new TransactionDTO(1, new DateOnly(2023, 05,05), "D", 100);
+            var accountRepository = new InMemoryAccountRepository();
+            var useCase = new InputTransactionUseCase(accountRepository);
+
+            useCase.Apply("20230505 AC002 D 100.00");
+
+            Assert.Throws<UseCaseException>(() => useCase.Apply("20230626 AC002 W 150.00"));
+
+            var dbAccounts = accountRepository.GetAll();
+            var dbActual = ToDTO(Assert.Single(dbAccounts));
+            Assert.Equal("AC002", dbActual.Id);
+            Assert.Equal(expectedTransaction, Assert.Single(dbActual.Transactions));
+        }
+
         [Theory]
         [InlineData("xyz", "Wrong number of argument to create an account.")]
         [InlineData("2023/05/05 AC002 D 100.00", "Invalid date, should be in YYYYMMdd format.")]

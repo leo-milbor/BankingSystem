@@ -8,29 +8,30 @@
         public string Id => _id;
         public IEnumerable<Transaction> Transactions => _transactions.Value;
 
-        public Account(string name, Transactions transactions)
+        public Account(string id, Transactions transactions)
         {
             if (transactions.Empty)
                 throw new EmptyTransactionsException();
-            _id = name;
+            _id = id;
             _transactions = transactions;
         }
 
-        public Account(string name, Transaction transaction)
+        public Account(string id, Transaction transaction)
         {
             if (transaction.IsWithdrawal)
                 throw new NegativeBalanceException();
-            _id = name;
+            _id = id;
             _transactions = new Transactions(transaction);
         }
 
-        public void AddTransaction(Date date, TransactionType type, Amount amount)
+        public Account AddTransaction(Date date, TransactionType type, Amount amount)
         {
             var runningNumber = NextRunningNumber(date);
             var transaction = new Transaction(runningNumber, date, type, amount);
-            _transactions.Add(transaction);
-            if (_transactions.HasNegtiveBalance)
+            var transactions = _transactions.Add(transaction);
+            if (transactions.HasNegtiveBalance)
                 throw new NegativeBalanceException();
+            return new Account(_id, transactions);
         }
 
         private int NextRunningNumber(Date date)
